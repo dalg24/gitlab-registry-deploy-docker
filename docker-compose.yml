@@ -27,7 +27,6 @@ services:
       - 'registry:/var/opt/gitlab/gitlab-rails/shared/registry'
       - './secrets/server.pem:/etc/gitlab/ssl/${HOSTNAME}.crt:ro'
       - './secrets/server.key:/etc/gitlab/ssl/${HOSTNAME}.key:ro'
-      - './secrets/server.key:/etc/gitlab/ssl/gitlab-registry.key:ro'
   registry:
     image: 'registry:2'
     restart: always
