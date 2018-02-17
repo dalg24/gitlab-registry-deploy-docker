@@ -1,0 +1,64 @@
+version: '3'
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    hostname: 'gitlab.example.com'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url "https://${HOSTNAME}"
+        nginx['redirect_http_to_https'] = true
+        nginx['ssl_certificate'] = "/etc/gitlab/ssl/localhost.crt"
+        nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/localhost.key"
+        gitlab_rails['gitlab_shell_ssh_port'] = "${ALTERNATE_SSH_PORT}"
+        registry_external_url "https://${HOSTNAME}:4567"
+        gitlab_rails['registry_enabled'] = true
+        gitlab_rails['registry_issuer'] = "omnibus-gitlab-issuer"
+        gitlab_rails['registry_path'] = "/var/opt/gitlab/gitlab-rails/shared/registry"
+    ports:
+      - '80:80'
+      - '443:443'
+      - '${ALTERNATE_SSH_PORT}:22'
+      - '4567'
+    volumes:
+      - 'config:/etc/gitlab'
+      - 'logs:/var/log/gitlab'
+      - 'data:/var/opt/gitlab'
+      - 'registry:/var/opt/gitlab/gitlab-rails/shared/registry'
+      - './secrets/server.pem:/etc/gitlab/ssl/localhost.crt:ro'
+      - './secrets/server.key:/etc/gitlab/ssl/localhost.key:ro'
+      - './secrets/server.key:/etc/gitlab/ssl/gitlab-registry.key:ro'
+  registry:
+    image: 'registry:2'
+    restart: always
+    environment:
+      REGISTRY_LOG_LEVEL: info
+      REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /var/lib/registry
+      REGISTRY_STORAGE_DELETE_ENABLED: "true"
+      REGISTRY_AUTH_TOKEN_SERVICE: container_registry
+      REGISTRY_AUTH_TOKEN_ISSUER: omnibus-gitlab-issuer
+      REGISTRY_AUTH_TOKEN_REALM: "https://${HOSTNAME}/jwt/auth"
+      REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE: /var/opt/gitlab/registry/gitlab-registry.crt
+      REGISTRY_HTTP_SECRET: "thisisasecret"
+    expose:
+      - '5000'
+    ports:
+      - '4567:5000'
+    volumes:
+      - 'data:/var/opt/gitlab:ro'
+      - 'registry:/var/lib/registry'
+#      - './secrets/server.pem:/certs/registry.crt:ro'
+
+volumes:
+  config:
+    external:
+      name: gitlab_config
+  logs:
+    external:
+      name: gitlab_logs
+  data:
+    external:
+      name: gitlab_data
+  registry:
+    external:
+      name: gitlab_registry
