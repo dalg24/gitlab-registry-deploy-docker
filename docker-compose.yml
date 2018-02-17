@@ -8,8 +8,8 @@ services:
       GITLAB_OMNIBUS_CONFIG: |
         external_url "https://${HOSTNAME}"
         nginx['redirect_http_to_https'] = true
-        nginx['ssl_certificate'] = "/etc/gitlab/ssl/localhost.crt"
-        nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/localhost.key"
+        nginx['ssl_certificate'] = "/etc/gitlab/ssl/${HOSTNAME}.crt"
+        nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/${HOSTNAME}.key"
         gitlab_rails['gitlab_shell_ssh_port'] = "${ALTERNATE_SSH_PORT}"
         registry_external_url "https://${HOSTNAME}:4567"
         gitlab_rails['registry_enabled'] = true
@@ -25,8 +25,8 @@ services:
       - 'logs:/var/log/gitlab'
       - 'data:/var/opt/gitlab'
       - 'registry:/var/opt/gitlab/gitlab-rails/shared/registry'
-      - './secrets/server.pem:/etc/gitlab/ssl/localhost.crt:ro'
-      - './secrets/server.key:/etc/gitlab/ssl/localhost.key:ro'
+      - './secrets/server.pem:/etc/gitlab/ssl/${HOSTNAME}.crt:ro'
+      - './secrets/server.key:/etc/gitlab/ssl/${HOSTNAME}.key:ro'
       - './secrets/server.key:/etc/gitlab/ssl/gitlab-registry.key:ro'
   registry:
     image: 'registry:2'
