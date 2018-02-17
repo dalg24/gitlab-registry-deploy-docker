@@ -11,7 +11,7 @@ services:
         nginx['ssl_certificate'] = "/etc/gitlab/ssl/${HOSTNAME}.crt"
         nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/${HOSTNAME}.key"
         gitlab_rails['gitlab_shell_ssh_port'] = "${ALTERNATE_SSH_PORT}"
-        registry_external_url "https://${HOSTNAME}:4567"
+        registry_external_url "https://${HOSTNAME}:${REGISTRY_PORT}"
         gitlab_rails['registry_enabled'] = true
         gitlab_rails['registry_issuer'] = "omnibus-gitlab-issuer"
         gitlab_rails['registry_path'] = "/var/opt/gitlab/gitlab-rails/shared/registry"
@@ -19,7 +19,7 @@ services:
       - '80:80'
       - '443:443'
       - '${ALTERNATE_SSH_PORT}:22'
-      - '4567'
+      - '${REGISTRY_PORT}'
     volumes:
       - 'config:/etc/gitlab'
       - 'logs:/var/log/gitlab'
@@ -43,7 +43,7 @@ services:
     expose:
       - '5000'
     ports:
-      - '4567:5000'
+      - '${REGISTRY_PORT}:5000'
     volumes:
       - 'data:/var/opt/gitlab:ro'
       - 'registry:/var/lib/registry'
