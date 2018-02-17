@@ -47,7 +47,6 @@ services:
     volumes:
       - 'data:/var/opt/gitlab:ro'
       - 'registry:/var/lib/registry'
-#      - './secrets/server.pem:/certs/registry.crt:ro'
 
 volumes:
   config:
