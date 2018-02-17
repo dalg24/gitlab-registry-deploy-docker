@@ -39,7 +39,7 @@ services:
       REGISTRY_AUTH_TOKEN_ISSUER: omnibus-gitlab-issuer
       REGISTRY_AUTH_TOKEN_REALM: "https://${HOSTNAME}/jwt/auth"
       REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE: /var/opt/gitlab/registry/gitlab-registry.crt
-      REGISTRY_HTTP_SECRET: "thisisasecret"
+      REGISTRY_HTTP_SECRET: "${HTTP_SECRET}"
     expose:
       - '5000'
     ports:
