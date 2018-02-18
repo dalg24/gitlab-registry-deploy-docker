@@ -32,8 +32,8 @@ services:
       - 'logs:/var/log/gitlab'
       - 'data:/var/opt/gitlab'
       - 'registry:/var/opt/gitlab/gitlab-rails/shared/registry'
-      - './secrets/server.pem:/etc/gitlab/ssl/${HOSTNAME}.crt:ro'
-      - './secrets/server.key:/etc/gitlab/ssl/${HOSTNAME}.key:ro'
+      - './secrets/gitlab.crt:/etc/gitlab/ssl/${HOSTNAME}.crt:ro'
+      - './secrets/gitlab.key:/etc/gitlab/ssl/${HOSTNAME}.key:ro'
   registry:
     image: 'registry:2'
     restart: always
