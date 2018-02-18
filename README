@@ -1,0 +1,3 @@
+# Generate self-signed certificate using
+
+    openssl req -nodes -newkey rsa:4096 -keyout gitlab.key -out gitlab.crt -days 3650 -x509 -subj "/CN=cloud.cees.ornl.gov"
